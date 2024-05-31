@@ -2,6 +2,7 @@ package it.epicode.U4_S7_L5_weekly_project.services;
 
 import it.epicode.U4_S7_L5_weekly_project.entities.Attendance;
 import it.epicode.U4_S7_L5_weekly_project.exceptions.NotFoundException;
+import it.epicode.U4_S7_L5_weekly_project.payloads.AttendanceDTO;
 import it.epicode.U4_S7_L5_weekly_project.repositories.AttendanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,9 +36,9 @@ public class AttendanceService {
 
     // PUT
     @Transactional
-    public Attendance updateAttendance(long id, Attendance updatedAttendance) {
+    public Attendance updateAttendance(long id, AttendanceDTO updatedAttendance) {
         Attendance attendanceToBeUpdated = this.getAttendanceById(id);
-        attendanceToBeUpdated.setEventStatus(updatedAttendance.getEventStatus());
+        attendanceToBeUpdated.setEventStatus(updatedAttendance.eventStatus());
         return attendanceRepository.save(attendanceToBeUpdated);
     }
 

@@ -2,6 +2,7 @@ package it.epicode.U4_S7_L5_weekly_project.services;
 
 import it.epicode.U4_S7_L5_weekly_project.entities.Location;
 import it.epicode.U4_S7_L5_weekly_project.exceptions.NotFoundException;
+import it.epicode.U4_S7_L5_weekly_project.payloads.LocationDTO;
 import it.epicode.U4_S7_L5_weekly_project.repositories.LocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,10 +36,10 @@ public class LocationService {
 
     // PUT
     @Transactional
-    public Location updateLocation(long id, Location updatedLocation) {
+    public Location updateLocation(long id, LocationDTO updatedLocation) {
         Location locationToBeUpdated = this.getLocationById(id);
-        locationToBeUpdated.setLocationCity(updatedLocation.getLocationCity());
-        locationToBeUpdated.setLocationName(updatedLocation.getLocationName());
+        locationToBeUpdated.setLocationCity(updatedLocation.locationCity());
+        locationToBeUpdated.setLocationName(updatedLocation.locationName());
         return locationRepository.save(locationToBeUpdated);
     }
 

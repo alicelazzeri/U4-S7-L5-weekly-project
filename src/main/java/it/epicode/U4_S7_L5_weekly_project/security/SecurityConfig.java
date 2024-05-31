@@ -25,7 +25,7 @@ import java.util.Arrays;
 
 public class SecurityConfig {
 
-    // cors configuration
+    // CORS configuration
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
@@ -38,7 +38,7 @@ public class SecurityConfig {
         return corsConfigurationSource;
     }
 
-    // jwt token configuration
+    // JWT token configuration
 
     @Bean
     private JWTAuthFilter jwtAuthFilter() {
@@ -57,7 +57,7 @@ public class SecurityConfig {
                 .and().build();
     }
 
-    // security filter chain configuration
+    // SecurityFilterChain configuration
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {

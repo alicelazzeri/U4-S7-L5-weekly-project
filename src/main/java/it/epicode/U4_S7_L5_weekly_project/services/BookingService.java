@@ -2,6 +2,7 @@ package it.epicode.U4_S7_L5_weekly_project.services;
 
 import it.epicode.U4_S7_L5_weekly_project.entities.Booking;
 import it.epicode.U4_S7_L5_weekly_project.exceptions.NotFoundException;
+import it.epicode.U4_S7_L5_weekly_project.payloads.BookingDTO;
 import it.epicode.U4_S7_L5_weekly_project.repositories.BookingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,11 +36,11 @@ public class BookingService {
 
     // PUT
     @Transactional
-    public Booking updateBooking(long id, Booking updatedBooking) {
+    public Booking updateBooking(long id, BookingDTO updatedBooking) {
         Booking bookingToBeUpdated = this.getBookingById(id);
-        bookingToBeUpdated.setUser(updatedBooking.getUser());
-        bookingToBeUpdated.setBookedEvent(updatedBooking.getBookedEvent());
-        bookingToBeUpdated.setBookingDate(updatedBooking.getBookingDate());
+        bookingToBeUpdated.setUser(updatedBooking.user());
+        bookingToBeUpdated.setBookedEvent(updatedBooking.bookedEvent());
+        bookingToBeUpdated.setBookingDate(updatedBooking.bookingDate());
         return bookingRepository.save(bookingToBeUpdated);
     }
 
