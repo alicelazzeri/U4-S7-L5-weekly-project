@@ -18,7 +18,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(setterPrefix = "with")
-
 public class Event {
 
     @Id
@@ -26,27 +25,34 @@ public class Event {
     @SequenceGenerator(name = "events_seq", sequenceName = "events_seq")
     private long id;
 
-    @Column
+    @Column(nullable = false)
     private String eventName;
-    @Column
+
+    @Column(nullable = false)
     private String eventDescription;
-    @Column
+
+    @Column(nullable = false)
     private LocalDateTime eventDate;
+
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private EventType eventType;
+
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private EventStatus eventStatus;
-    @Column
+
+    @Column(nullable = false)
     private int eventAvailableSeats;
 
-    @ManyToOne
-    @JoinColumn(name = "event_organizer_id")
-    private User eventOrganizer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "bookedEvent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Booking> bookings = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "location_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "location_id", nullable = false)
     private Location location;
 }

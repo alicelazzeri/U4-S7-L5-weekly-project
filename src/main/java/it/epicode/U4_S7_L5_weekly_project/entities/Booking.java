@@ -9,27 +9,26 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table (name = "bookings")
+@Table(name = "bookings")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(setterPrefix = "with")
-
 public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bookings_seq")
-    @SequenceGenerator(name = "booking_seq", sequenceName = "bookings_seq")
+    @SequenceGenerator(name = "bookings_seq", sequenceName = "bookings_seq")
     private long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "event_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_id", nullable = false)
     private Event bookedEvent;
 
-    @Column
+    @Column(nullable = false)
     private LocalDateTime bookingDate;
 }

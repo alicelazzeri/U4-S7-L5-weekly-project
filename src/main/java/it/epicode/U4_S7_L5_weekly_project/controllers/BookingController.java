@@ -1,20 +1,27 @@
 package it.epicode.U4_S7_L5_weekly_project.controllers;
 
 import it.epicode.U4_S7_L5_weekly_project.entities.Booking;
+import it.epicode.U4_S7_L5_weekly_project.entities.Event;
 import it.epicode.U4_S7_L5_weekly_project.entities.Location;
+import it.epicode.U4_S7_L5_weekly_project.entities.enums.EventStatus;
 import it.epicode.U4_S7_L5_weekly_project.exceptions.BadRequestException;
 import it.epicode.U4_S7_L5_weekly_project.exceptions.NoContentException;
 import it.epicode.U4_S7_L5_weekly_project.exceptions.NotFoundException;
 import it.epicode.U4_S7_L5_weekly_project.payloads.BookingDTO;
 import it.epicode.U4_S7_L5_weekly_project.services.BookingService;
+import it.epicode.U4_S7_L5_weekly_project.services.EventService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/bookings")
@@ -23,9 +30,13 @@ public class BookingController {
     @Autowired
     private BookingService bookingService;
 
+    @Autowired
+    private EventService eventService;
+
     // GET all
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN_ROLE')")
     public ResponseEntity<org.springframework.data.domain.Page<Booking>> getAllBookings(Pageable pageable) {
         org.springframework.data.domain.Page<Booking> bookings = bookingService.getAllBookings(pageable);
         if (bookings.isEmpty()) {
@@ -39,6 +50,7 @@ public class BookingController {
     // GET id
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN_ROLE')")
     public ResponseEntity<Booking> getBookingById (@PathVariable long id) {
         Booking booking = bookingService.getBookingById(id);
         if (booking == null) {
@@ -52,6 +64,7 @@ public class BookingController {
     // POST
 
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Booking> saveBooking(@RequestBody @Validated BookingDTO bookingPayload, BindingResult validation){
         if (validation.hasErrors()) {
             throw new BadRequestException(validation.getAllErrors());
@@ -70,6 +83,7 @@ public class BookingController {
     // PUT
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN_ROLE')")
     public ResponseEntity<Booking> updateBooking(@PathVariable long id, @RequestBody @Validated BookingDTO updatedBookingPayload, BindingResult validation) {
         if (validation.hasErrors()) {
             throw new BadRequestException(validation.getAllErrors());
@@ -91,10 +105,20 @@ public class BookingController {
     // DELETE
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN_ROLE') or hasAuthority('BASIC_USER')")
     public ResponseEntity<Void> deleteBooking(@PathVariable long id) {
         bookingService.deleteBooking(id);
         ResponseEntity<Void> responseEntity = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         return responseEntity;
     }
+
+    @GetMapping("/user/{id}")
+    public ResponseEntity<List<Event>> getBookedEventsByUserId(@PathVariable long id) {
+        List<Event> bookedEvents = bookingService.getBookedEventsByUserId(id);
+        ResponseEntity<List<Event>> responseEntity = new ResponseEntity<>(bookedEvents, HttpStatus.OK);
+        return responseEntity;
+    }
+
+
 
 }

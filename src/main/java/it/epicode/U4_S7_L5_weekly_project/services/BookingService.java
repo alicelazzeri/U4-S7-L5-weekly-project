@@ -1,6 +1,7 @@
 package it.epicode.U4_S7_L5_weekly_project.services;
 
 import it.epicode.U4_S7_L5_weekly_project.entities.Booking;
+import it.epicode.U4_S7_L5_weekly_project.entities.Event;
 import it.epicode.U4_S7_L5_weekly_project.exceptions.NotFoundException;
 import it.epicode.U4_S7_L5_weekly_project.payloads.BookingDTO;
 import it.epicode.U4_S7_L5_weekly_project.repositories.BookingRepository;
@@ -9,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class BookingService {
@@ -48,5 +51,11 @@ public class BookingService {
     @Transactional
     public void deleteBooking(long id) {
         bookingRepository.deleteById(id);
+    }
+
+    @Transactional
+    public List<Event> getBookedEventsByUserId(long id) {
+        return bookingRepository.findBookedEventsByUserId(id);
+
     }
 }

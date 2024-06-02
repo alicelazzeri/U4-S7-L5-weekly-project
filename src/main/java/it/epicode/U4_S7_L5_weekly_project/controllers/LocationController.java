@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -51,6 +52,7 @@ public class LocationController {
     // POST
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ADMIN_ROLE')")
     public ResponseEntity<Location> saveLocation(@RequestBody @Validated LocationDTO locationPayload,BindingResult validation){
         if (validation.hasErrors()) {
             throw new BadRequestException(validation.getAllErrors());
@@ -69,6 +71,7 @@ public class LocationController {
     // PUT
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN_ROLE')")
     public ResponseEntity<Location> updateLocation(@PathVariable long id, @RequestBody @Validated LocationDTO updatedLocationPayload, BindingResult validation) {
         if (validation.hasErrors()) {
             throw new BadRequestException(validation.getAllErrors());
@@ -90,6 +93,7 @@ public class LocationController {
     // DELETE
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN_ROLE')")
     public ResponseEntity<Void> deleteLocation(@PathVariable long id) {
         locationService.deleteLocation(id);
         ResponseEntity<Void> responseEntity = new ResponseEntity<>(HttpStatus.NO_CONTENT);

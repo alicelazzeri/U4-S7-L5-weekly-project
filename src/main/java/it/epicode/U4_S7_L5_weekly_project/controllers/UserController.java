@@ -22,6 +22,7 @@ public class UserController {
     // GET all
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN_ROLE')")
     public ResponseEntity<Page<User>> getAllUsers(Pageable pageable) {
         Page<User> users = userService.getAllUsers(pageable);
         if (users.isEmpty()) {
@@ -35,6 +36,7 @@ public class UserController {
     // GET profile
 
     @GetMapping("/me")
+    @PreAuthorize("hasAnyAuthority('BASIC_USER', 'EVENT_ORGANIZER_USER', 'ADMIN_ROLE')")
     public ResponseEntity<User> getProfile(@AuthenticationPrincipal User authenticatedUser) {
         return ResponseEntity.ok(authenticatedUser);
     }
@@ -42,7 +44,8 @@ public class UserController {
     // PUT profile
 
     @PutMapping("/me")
-    public ResponseEntity<User> updateProfile(@AuthenticationPrincipal User authenticatedUser, @RequestBody User updatedUser) {
+    @PreAuthorize("hasAnyAuthority('BASIC_USER', 'EVENT_ORGANIZER_USER', 'ADMIN_ROLE')")
+    public ResponseEntity<User> updateUser(@AuthenticationPrincipal User authenticatedUser, @RequestBody User updatedUser) {
         User profileToBeUpdated = userService.updateUser(authenticatedUser.getId(), updatedUser);
         return ResponseEntity.ok(profileToBeUpdated);
     }
@@ -50,7 +53,8 @@ public class UserController {
     // DELETE profile
 
     @DeleteMapping("/me")
-    public ResponseEntity<Void> deleteProfile(@AuthenticationPrincipal User authenticatedUser) {
+    @PreAuthorize("hasAnyAuthority('BASIC_USER', 'EVENT_ORGANIZER_USER', 'ADMIN_ROLE')")
+    public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal User authenticatedUser) {
         userService.deleteUser(authenticatedUser.getId());
         return ResponseEntity.noContent().build();
     }
@@ -58,6 +62,7 @@ public class UserController {
     // GET id
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN_ROLE')")
     public ResponseEntity<User> getUserById(@PathVariable long id){
         User user = userService.getUserById(id);
         ResponseEntity<User> responseEntity = new ResponseEntity<>(user, HttpStatus.OK);
@@ -68,7 +73,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN_ROLE')")
-    public ResponseEntity<User> updateProfile(@PathVariable long id, @RequestBody User profilePayload) {
+    public ResponseEntity<User> updateUser(@PathVariable long id, @RequestBody User profilePayload) {
         User userToBeUpdated = userService.updateUser(id, profilePayload);
         ResponseEntity<User> responseEntity = new ResponseEntity<>(userToBeUpdated, HttpStatus.OK);
         return responseEntity;
@@ -78,7 +83,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN_ROLE')")
-    public ResponseEntity<Void> deleteProfile(@PathVariable long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }

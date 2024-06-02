@@ -1,12 +1,15 @@
 package it.epicode.U4_S7_L5_weekly_project.controllers;
 
+import it.epicode.U4_S7_L5_weekly_project.entities.Booking;
 import it.epicode.U4_S7_L5_weekly_project.entities.Event;
 import it.epicode.U4_S7_L5_weekly_project.entities.Location;
 import it.epicode.U4_S7_L5_weekly_project.entities.enums.EventStatus;
 import it.epicode.U4_S7_L5_weekly_project.exceptions.BadRequestException;
 import it.epicode.U4_S7_L5_weekly_project.exceptions.NoContentException;
 import it.epicode.U4_S7_L5_weekly_project.exceptions.NotFoundException;
+import it.epicode.U4_S7_L5_weekly_project.payloads.BookingDTO;
 import it.epicode.U4_S7_L5_weekly_project.payloads.EventDTO;
+import it.epicode.U4_S7_L5_weekly_project.services.BookingService;
 import it.epicode.U4_S7_L5_weekly_project.services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,9 +17,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/events")
@@ -24,6 +30,9 @@ public class EventController {
 
     @Autowired
     private EventService eventService;
+
+    @Autowired
+    private BookingService bookingService;
 
     // GET all
 
@@ -54,6 +63,7 @@ public class EventController {
     // POST
 
     @PostMapping
+    @PreAuthorize("hasRole('EVENT_ORGANIZER_USER')")
     public ResponseEntity<Event> saveEvent(@RequestBody @Validated EventDTO eventPayload, BindingResult validation) {
         if (validation.hasErrors()) {
             throw new BadRequestException(validation.getAllErrors());
@@ -64,7 +74,7 @@ public class EventController {
                     .withEventDate(eventPayload.eventDate())
                     .withEventStatus(eventPayload.eventStatus())
                     .withEventType(eventPayload.eventType())
-                    .withEventOrganizer(eventPayload.eventOrganizer())
+                    .withUser(eventPayload.eventOrganizer())
                     .withEventAvailableSeats(eventPayload.eventAvailableSeats())
                     .withBookings(eventPayload.bookings())
                     .withLocation(eventPayload.location())
@@ -78,6 +88,7 @@ public class EventController {
     // PUT
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('EVENT_ORGANIZER_USER')")
     public ResponseEntity<Event> updateEvent(@PathVariable long id, @RequestBody @Validated EventDTO updatedEventPayload, BindingResult validation) {
         if (validation.hasErrors()) {
             throw new BadRequestException(validation.getAllErrors());
@@ -91,7 +102,7 @@ public class EventController {
             eventToBeUpdated.setEventType(updatedEventPayload.eventType());
             eventToBeUpdated.setEventStatus(updatedEventPayload.eventStatus());
             eventToBeUpdated.setEventAvailableSeats(updatedEventPayload.eventAvailableSeats());
-            eventToBeUpdated.setEventOrganizer(updatedEventPayload.eventOrganizer());
+            eventToBeUpdated.setUser(updatedEventPayload.eventOrganizer());
             eventToBeUpdated.setBookings(updatedEventPayload.bookings());
             eventToBeUpdated.setLocation(updatedEventPayload.location());
 
@@ -104,9 +115,22 @@ public class EventController {
     // DELETE
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('EVENT_ORGANIZER_USER')")
     public ResponseEntity<Void> deleteEvent(@PathVariable long id) {
         eventService.deleteEvent(id);
         ResponseEntity<Void> responseEntity = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         return responseEntity;
     }
+
+    // POST bookSeat
+
+    @PostMapping("/{id}/book")
+    @PreAuthorize("hasRole('BASIC_USER') or hasRole('EVENT_ORGANIZER_USER')")
+    public ResponseEntity<Event> bookSeat(@PathVariable long id) {
+        Event event = eventService.bookSeat(id);
+        ResponseEntity<Event> responseEntity = new ResponseEntity<>(event, HttpStatus.OK);
+        return responseEntity;
+    }
+
+
 }

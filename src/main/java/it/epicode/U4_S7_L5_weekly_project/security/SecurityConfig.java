@@ -41,7 +41,7 @@ public class SecurityConfig {
     // JWT token configuration
 
     @Bean
-    private JWTAuthFilter jwtAuthFilter() {
+    public JWTAuthFilter jwtAuthFilter() {
         return new JWTAuthFilter();
     }
 

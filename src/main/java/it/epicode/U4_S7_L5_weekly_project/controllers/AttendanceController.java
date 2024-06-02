@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ public class AttendanceController {
     // GET all
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN_ROLE')")
     public ResponseEntity<Page<Attendance>> getAllAttendances(Pageable pageable) {
         Page<Attendance> attendances = attendanceService.getAllAttendances(pageable);
         if (attendances.isEmpty()) {
@@ -38,6 +40,7 @@ public class AttendanceController {
     // GET id
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN_ROLE')")
     public ResponseEntity<Attendance> getAttendanceById (@PathVariable long id) {
         Attendance attendance = attendanceService.getAttendanceById(id);
         if (attendance == null) {
@@ -51,6 +54,7 @@ public class AttendanceController {
     // POST
 
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Attendance> saveAttendance(@RequestBody @Validated AttendanceDTO attendancePayload, BindingResult validation){
         if (validation.hasErrors()) {
             throw new BadRequestException(validation.getAllErrors());
@@ -69,6 +73,7 @@ public class AttendanceController {
     // PUT
 
     @PutMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Attendance> updateAttendance(@PathVariable long id, @RequestBody @Validated AttendanceDTO updatedAttendancePayload, BindingResult validation) {
         if (validation.hasErrors()) {
             throw new BadRequestException(validation.getAllErrors());

@@ -13,13 +13,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table (name = "users")
+@Table(name = "users")
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties({"password", "role", "authorities", "accountNonExpired", "credentialsNonExpired", "accountNonLocked", "enabled"})
-
 public class User implements UserDetails {
 
     @Id
@@ -27,28 +27,34 @@ public class User implements UserDetails {
     @SequenceGenerator(name = "users_seq", sequenceName = "users_seq")
     private long id;
 
-    @Column
+    @Column(nullable = false)
     private String firstName;
-    @Column
+
+    @Column(nullable = false)
     private String lastName;
+
     @Enumerated(EnumType.STRING)
     private Gender gender;
-    @Column
+
+    @Column(nullable = false, unique = true)
     private String email;
-    @Column
+
+    @Column(nullable = false)
     private String password;
+
     @Column
     private String avatarUrl;
-    @Enumerated
+
+    @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "user")
-    private List<Event> events = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Event> events;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Booking> bookings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Attendance> attendances = new ArrayList<>();
 
     public User(String firstName, String lastName, String email, String password, String avatarUrl) {

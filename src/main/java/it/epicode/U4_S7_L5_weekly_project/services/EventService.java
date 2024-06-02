@@ -1,13 +1,20 @@
 package it.epicode.U4_S7_L5_weekly_project.services;
 
+import it.epicode.U4_S7_L5_weekly_project.entities.Booking;
 import it.epicode.U4_S7_L5_weekly_project.entities.Event;
+import it.epicode.U4_S7_L5_weekly_project.entities.User;
+import it.epicode.U4_S7_L5_weekly_project.entities.enums.EventStatus;
+import it.epicode.U4_S7_L5_weekly_project.exceptions.BadRequestException;
 import it.epicode.U4_S7_L5_weekly_project.exceptions.NotFoundException;
+import it.epicode.U4_S7_L5_weekly_project.payloads.EventDTO;
 import it.epicode.U4_S7_L5_weekly_project.repositories.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class EventService {
@@ -35,13 +42,13 @@ public class EventService {
 
     // PUT
     @Transactional
-    public Event updateEvent(long id, Event updatedEvent) {
+    public Event updateEvent(long id, EventDTO updatedEvent) {
         Event eventToBeUpdated = this.getEventById(id);
-        eventToBeUpdated.setEventName(updatedEvent.getEventName());
-        eventToBeUpdated.setEventDescription(updatedEvent.getEventDescription());
-        eventToBeUpdated.setEventDate(updatedEvent.getEventDate());
-        eventToBeUpdated.setEventType(updatedEvent.getEventType());
-        eventToBeUpdated.setEventAvailableSeats(updatedEvent.getEventAvailableSeats());
+        eventToBeUpdated.setEventName(updatedEvent.eventName());
+        eventToBeUpdated.setEventDescription(updatedEvent.eventDescription());
+        eventToBeUpdated.setEventDate(updatedEvent.eventDate());
+        eventToBeUpdated.setEventType(updatedEvent.eventType());
+        eventToBeUpdated.setEventAvailableSeats(updatedEvent.eventAvailableSeats());
         return eventRepository.save(eventToBeUpdated);
     }
 
@@ -49,5 +56,16 @@ public class EventService {
     @Transactional
     public void deleteEvent(long id) {
         eventRepository.deleteById(id);
+    }
+
+    @Transactional
+    public Event bookSeat(long id) {
+        Event event = this.getEventById(id);
+        if (event.getEventAvailableSeats() > 0) {
+            event.setEventAvailableSeats(event.getEventAvailableSeats() - 1);
+            return eventRepository.save(event);
+        } else {
+            throw new IllegalStateException("No available seats for this event.");
+        }
     }
 }
