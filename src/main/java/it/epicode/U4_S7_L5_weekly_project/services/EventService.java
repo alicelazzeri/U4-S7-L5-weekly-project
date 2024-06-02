@@ -1,20 +1,16 @@
 package it.epicode.U4_S7_L5_weekly_project.services;
 
-import it.epicode.U4_S7_L5_weekly_project.entities.Booking;
 import it.epicode.U4_S7_L5_weekly_project.entities.Event;
-import it.epicode.U4_S7_L5_weekly_project.entities.User;
-import it.epicode.U4_S7_L5_weekly_project.entities.enums.EventStatus;
-import it.epicode.U4_S7_L5_weekly_project.exceptions.BadRequestException;
+import it.epicode.U4_S7_L5_weekly_project.entities.Location;
 import it.epicode.U4_S7_L5_weekly_project.exceptions.NotFoundException;
 import it.epicode.U4_S7_L5_weekly_project.payloads.EventDTO;
 import it.epicode.U4_S7_L5_weekly_project.repositories.EventRepository;
+import it.epicode.U4_S7_L5_weekly_project.repositories.LocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class EventService {
@@ -22,9 +18,12 @@ public class EventService {
     @Autowired
     private EventRepository eventRepository;
 
+    @Autowired
+    private LocationRepository locationRepository;
+
     // GET all
     @Transactional(readOnly = true)
-    public Page<Event> getallEvents(Pageable pageable) {
+    public Page<Event> getAllEvents(Pageable pageable) {
         return eventRepository.findAll(pageable);
     }
 

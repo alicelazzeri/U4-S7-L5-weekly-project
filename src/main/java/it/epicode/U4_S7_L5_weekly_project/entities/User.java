@@ -33,6 +33,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String lastName;
 
+    @Column(columnDefinition = "character varying")
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
@@ -45,6 +46,7 @@ public class User implements UserDetails {
     @Column
     private String avatarUrl;
 
+    @Column(columnDefinition = "character varying")
     @Enumerated(EnumType.STRING)
     private Role role;
 

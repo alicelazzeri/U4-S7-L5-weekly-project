@@ -2,15 +2,12 @@ package it.epicode.U4_S7_L5_weekly_project.controllers;
 
 import it.epicode.U4_S7_L5_weekly_project.entities.Booking;
 import it.epicode.U4_S7_L5_weekly_project.entities.Event;
-import it.epicode.U4_S7_L5_weekly_project.entities.Location;
-import it.epicode.U4_S7_L5_weekly_project.entities.enums.EventStatus;
 import it.epicode.U4_S7_L5_weekly_project.exceptions.BadRequestException;
 import it.epicode.U4_S7_L5_weekly_project.exceptions.NoContentException;
 import it.epicode.U4_S7_L5_weekly_project.exceptions.NotFoundException;
 import it.epicode.U4_S7_L5_weekly_project.payloads.BookingDTO;
 import it.epicode.U4_S7_L5_weekly_project.services.BookingService;
 import it.epicode.U4_S7_L5_weekly_project.services.EventService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -70,7 +67,7 @@ public class BookingController {
             throw new BadRequestException(validation.getAllErrors());
         } else {
             Booking locationToBeSaved = Booking.builder()
-                    .withBookedEvent(bookingPayload.bookedEvent())
+                    .withEvent(bookingPayload.bookedEvent())
                     .withBookingDate(bookingPayload.bookingDate())
                     .withUser(bookingPayload.user())
                     .build();
@@ -92,7 +89,7 @@ public class BookingController {
             if (bookingToBeUpdated == null) {
                 throw new NotFoundException(id);
             }
-            bookingToBeUpdated.setBookedEvent(updatedBookingPayload.bookedEvent());
+            bookingToBeUpdated.setEvent(updatedBookingPayload.bookedEvent());
             bookingToBeUpdated.setBookingDate(updatedBookingPayload.bookingDate());
             bookingToBeUpdated.setUser(updatedBookingPayload.user());
 

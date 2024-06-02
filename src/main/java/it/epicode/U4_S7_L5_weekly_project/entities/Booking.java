@@ -27,7 +27,7 @@ public class Booking {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)
-    private Event bookedEvent;
+    private Event event;
 
     @Column(nullable = false)
     private LocalDateTime bookingDate;

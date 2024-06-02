@@ -1,13 +1,9 @@
 package it.epicode.U4_S7_L5_weekly_project.controllers;
 
-import it.epicode.U4_S7_L5_weekly_project.entities.Booking;
 import it.epicode.U4_S7_L5_weekly_project.entities.Event;
-import it.epicode.U4_S7_L5_weekly_project.entities.Location;
-import it.epicode.U4_S7_L5_weekly_project.entities.enums.EventStatus;
 import it.epicode.U4_S7_L5_weekly_project.exceptions.BadRequestException;
 import it.epicode.U4_S7_L5_weekly_project.exceptions.NoContentException;
 import it.epicode.U4_S7_L5_weekly_project.exceptions.NotFoundException;
-import it.epicode.U4_S7_L5_weekly_project.payloads.BookingDTO;
 import it.epicode.U4_S7_L5_weekly_project.payloads.EventDTO;
 import it.epicode.U4_S7_L5_weekly_project.services.BookingService;
 import it.epicode.U4_S7_L5_weekly_project.services.EventService;
@@ -15,14 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/events")
@@ -38,7 +31,7 @@ public class EventController {
 
     @GetMapping
     public ResponseEntity<Page<Event>> getAllEvents(Pageable pageable) {
-        Page<Event> events = eventService.getallEvents(pageable);
+        Page<Event> events = eventService.getAllEvents(pageable);
         if (events.isEmpty()) {
             throw new NoContentException("No events were found.");
         } else {

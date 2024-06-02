@@ -19,6 +19,9 @@ public class BookingService {
     @Autowired
     private BookingRepository bookingRepository;
 
+    @Autowired
+    private EventService eventService;
+
     // GET all
     @Transactional(readOnly = true)
     public Page<Booking> getAllBookings(Pageable pageable) {
@@ -31,18 +34,35 @@ public class BookingService {
         return bookingRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
     }
 
-    // POST
     @Transactional
     public Booking saveBooking(Booking booking) {
+        Event event = booking.getEvent();
+        if (event == null || event.getLocation() == null) {
+            throw new IllegalArgumentException("Booking must have a valid event with a location.");
+        }
+
+        if (event.getId() != null) {
+            Event existingEvent = eventService.getEventById(event.getId());
+            if (existingEvent == null) {
+                throw new NotFoundException("Event with ID " + event.getId() + " not found.");
+            }
+            booking.setEvent(existingEvent);
+        } else {
+            event = eventService.saveEvent(event);
+            booking.setEvent(event);
+        }
+
         return bookingRepository.save(booking);
     }
+
+
 
     // PUT
     @Transactional
     public Booking updateBooking(long id, BookingDTO updatedBooking) {
         Booking bookingToBeUpdated = this.getBookingById(id);
         bookingToBeUpdated.setUser(updatedBooking.user());
-        bookingToBeUpdated.setBookedEvent(updatedBooking.bookedEvent());
+        bookingToBeUpdated.setEvent(updatedBooking.bookedEvent());
         bookingToBeUpdated.setBookingDate(updatedBooking.bookingDate());
         return bookingRepository.save(bookingToBeUpdated);
     }

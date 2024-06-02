@@ -1,12 +1,10 @@
+// Event.java
 package it.epicode.U4_S7_L5_weekly_project.entities;
 
 import it.epicode.U4_S7_L5_weekly_project.entities.enums.EventStatus;
 import it.epicode.U4_S7_L5_weekly_project.entities.enums.EventType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,7 +21,7 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "events_seq")
     @SequenceGenerator(name = "events_seq", sequenceName = "events_seq")
-    private long id;
+    private Long id;
 
     @Column(nullable = false)
     private String eventName;
@@ -49,7 +47,7 @@ public class Event {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "bookedEvent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Booking> bookings = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
